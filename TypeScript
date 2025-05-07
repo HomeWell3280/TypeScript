@@ -1,0 +1,61 @@
+cd packages/web-app
+yarn start
+
+cd packages/mobile-app
+npx react-native start
+# in another terminal:
+# iOS
+yarn ios
+# Android
+yarn android
+
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "jsx": "react-jsx",
+    "strict": true,
+    "strictNullChecks": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
+
+import React, { useState } from 'react';
+import { useNullable } from '../hooks/useNullable';
+
+interface UserData {
+  name?: string;
+  email?: string;
+}
+
+export const UserForm: React.FC = () => {
+  const [data, setData] = useState<UserData>({});
+
+  const getName = useNullable(data.name, 'Name');
+  const getEmail = useNullable(data.email, 'Email');
+
+  const handleSubmit = () => {
+    try {
+      const name = getName();
+      const email = getEmail();
+      alert(`Submitting: ${name} - ${email}`);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Unknown error');
+    }
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <input
+        placeholder="Name"
+        onChange={e => setData({ ...data, name: e.target.value })}
+      />
+      <input
+        placeholder="Email"
+        onChange={e => setData({ ...data, email: e.target.value })}
+      />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
+  );
+};
